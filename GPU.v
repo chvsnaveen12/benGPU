@@ -6,25 +6,30 @@
 
 module GPU (
         input CLK,
+        input RST,
         output HSYNC,
         output VSYNC,
+        output [8:0] HCOUNT,
+        output [9:0] VCOUNT,
         output [15:0] ADDR,
         output OE
 );
-        wire hRst, hVisible, hSync, vRst, vVisible, vSync;
+        
+        wire hRst, hVisible, vRst, vVisible;
         wire [8:0] hCount;
         wire [9:0] vCount;
 
-        hCounter hcounter(clk, hRst, hCount);
-        hSyncGen hgenerator(hCount, hVisible, hSync, hRst);
-        vCounter vcounter(hRst, vRst, vCount);
-        vSyncGen vgenerator(vCount, vVisible, vSync, vRst);
+        hCounter hcounter(CLK, hRst, RST, hCount);
+        hSyncGen hgenerator(hCount, hVisible, HSYNC, hRst);
+        vCounter vcounter(hRst, vRst, RST, vCount);
+        vSyncGen vgenerator(vCount, vVisible, VSYNC, vRst);
 
-        assign HSYNC = hSync;
-        assign VSYNC = vSync;
-
-        assign OE = hSync & vSync; 
+        assign OE = hVisible & vVisible;
         assign ADDR = {vCount[9:2],hCount[7:0]};
 
+        assign HCOUNT = hCount;
+        assign VCOUNT = vCount;
+
+        assign HRST = hRst;
 
 endmodule

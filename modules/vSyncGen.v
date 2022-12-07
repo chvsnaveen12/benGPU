@@ -9,14 +9,21 @@ module vSyncGen (
 
         always @ (vCount)
         begin
-                if(vCount == 600)
+                if(vCount == 0)
+                begin
+                        vVisible <= 1'b1;
+                        vSync <= 1'b1;
+                end
+                
+                else if(vCount == 600)
                         vVisible <= 1'b0;
+                
                 else if(vCount == 601)
                         vSync <= 1'b0;
+                
                 else if(vCount == 605)
                         vSync <= 1'b1;
-                else if(vCount == 628)
-                        vVisible <= 1'b1;
+                
         end
 
 endmodule
